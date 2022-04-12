@@ -2,18 +2,21 @@ import React, { useState } from 'react';
 import './App.css';
 import Title from './components/Title';
 import Modal from './components/Modal';
+import EventList from './components/EventList';
+import NewEventForm from './components/NewEventForm';
 
 
 function App() {
-  const [ showModal, setShowModal ] =useState(true)
+  const [ showModal, setShowModal ] =useState(false)
   const [ showEvents, setShowEvents ] = useState(true)
-  const [ events, setEvents ] = useState([
-    { title: "Mario's birthday bash", id: 1 },
-    { title: "Bowser's live stream", id: 2 },
-    { title: "Race on moo moo farm", id: 3 },
-  ])
+  const [ events, setEvents ] = useState([])
 
-  console.log(showEvents);
+  const addEvent = (event) => {
+    setEvents((prevEvents) => {
+      return [...prevEvents, event]
+    })
+    setShowModal(false)
+  }
 
   const handleClick = (id) => {
     setEvents((prevEvents) => {
@@ -46,18 +49,19 @@ function App() {
         </div>
       )}
 
-      {showEvents && events.map((event, index) => (
-        <React.Fragment key={event.id}>
-          <h2>{ index } - { event.title }</h2>
-          <button onClick={() => handleClick(event.id) }>delete event</button>
-        </React.Fragment>
-      ))}
+      {showEvents && 
+        <EventList events={events} handleDelete={handleClick}/>
+      }
+      
       {showModal && (
-        <Modal handleClose={handleClose}>
-         <h2>10% Off Cupon Code!!</h2>
-         <p>Use the code CESAR123 at the checkout</p>
+        <Modal handleClose={handleClose} isSalesModal={true}>
+         <NewEventForm addEvent={addEvent}/>
         </Modal>
       )}
+
+      {!showModal &&
+        <button onClick={() => setShowModal(true)}>Add New Event</button>
+      }
 
     </div>
   );
